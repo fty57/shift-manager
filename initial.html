@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gerenciador de Turnos</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;500;600&display=swap");
+      .completed {
+        opacity: 0.5;
+      }
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="text-light bg-dark">
+    <div class="container-fluid">
+      <h1 class="display-1">Gerenciador de Turnos</h1>
+
+      <h5 class="h5">Total de Cards: <span id="cardCount">0</span></h5>
+
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          id="nameInput"
+          placeholder="Digite um nome"
+          class="form-control"
+        />
+        <button onclick="addCard(); clearInput()" class="btn btn-success">
+          Adicionar
+        </button>
+        <button onclick="confirmClear()" class="btn btn-danger">
+          Limpar Tudo
+        </button>
+      </div>
+
+      <div id="cardsContainer"></div>
+    </div>
+
+    <script>
+      function addCard() {
+        var name = document.getElementById("nameInput").value;
+        if (name === "") {
+          alert("Por favor, insira um nome!");
+          return;
+        }
+
+        var cardId = Date.now();
+        var startTime = new Date().toLocaleTimeString();
+
+        var cardHtml = `
+          <div class="card bg-dark-emphasis" id="${cardId}">
+            <div class="card-header">
+              <p class="h1">${name}</p>
+            </div>
+            <div class='card-body'>
+              <h5 class="card-title">Tempo inicial: <span>${startTime}</span></h5>
+              <h5 class="card-title">Tempo final: <span id="endTime-${cardId}"></span></h5>
+
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-success" onclick="addTurn(${cardId})">Adicionar turno</button>
+                <button type="button" class="btn btn-danger" onclick="removeTurn(${cardId})">Remover turno</button>
+                <button type="button" class="btn btn-warning" onclick="completeCard(${cardId})">Concluir</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        var cardsContainer = document.getElementById("cardsContainer");
+        cardsContainer.insertAdjacentHTML("afterbegin", cardHtml);
+
+        var endTime = new Date();
+        endTime.setMinutes(endTime.getMinutes() + 10);
+        document.getElementById(`endTime-${cardId}`).textContent =
+          endTime.toLocaleTimeString();
+
+        localStorage.setItem(
+          cardId,
+          JSON.stringify({
+            name: name,
+            startTime: startTime,
+            turns: 1,
+            completed: false,
+          })
+        );
+
+        updateCardCount(); // Atualiza o contador de cards
+      }
+
+      function addTurn(cardId) {
+        var card = document.getElementById(cardId);
+        var endTimeSpan = document.getElementById("endTime-" + cardId);
+        var turns = parseInt(JSON.parse(localStorage.getItem(cardId)).turns);
+
+        turns++;
+        localStorage.setItem(
+          cardId,
+          JSON.stringify({
+            name: card.querySelector("p").textContent,
+            startTime: JSON.parse(localStorage.getItem(cardId)).startTime,
+            turns: turns,
+            completed: JSON.parse(localStorage.getItem(cardId)).completed,
+          })
+        );
+
+        var endTime = new Date();
+        endTime.setMinutes(endTime.getMinutes() + turns * 10);
+        endTimeSpan.textContent = endTime.toLocaleTimeString();
+      }
+
+      function removeTurn(cardId) {
+        var card = document.getElementById(cardId);
+        var endTimeSpan = document.getElementById("endTime-" + cardId);
+        var turns = parseInt(JSON.parse(localStorage.getItem(cardId)).turns);
+
+        if (turns > 1) {
+          turns--;
+          localStorage.setItem(
+            cardId,
+            JSON.stringify({
+              name: card.querySelector("p").textContent,
+              startTime: JSON.parse(localStorage.getItem(cardId)).startTime,
+              turns: turns,
+              completed: JSON.parse(localStorage.getItem(cardId)).completed,
+            })
+          );
+
+          var endTime = new Date();
+          endTime.setMinutes(endTime.getMinutes() + turns * 10);
+          endTimeSpan.textContent = endTime.toLocaleTimeString();
+        }
+      }
+
+      function completeCard(cardId) {
+        var card = document.getElementById(cardId);
+        card.classList.add("completed");
+        var completed = JSON.parse(localStorage.getItem(cardId)).completed;
+        localStorage.setItem(
+          cardId,
+          JSON.stringify({
+            name: card.querySelector("p").textContent,
+            startTime: JSON.parse(localStorage.getItem(cardId)).startTime,
+            turns: JSON.parse(localStorage.getItem(cardId)).turns,
+            completed: !completed,
+          })
+        );
+      }
+
+      function confirmClear() {
+        var confirmation = confirm(
+          "Tem certeza de que deseja limpar todos os registros?"
+        );
+        if (confirmation) {
+          clearAll();
+        }
+      }
+
+      function clearAll() {
+        var cardsContainer = document.getElementById("cardsContainer");
+        cardsContainer.innerHTML = ""; // Remove todos os cards do container
+        localStorage.clear(); // Limpa todos os registros do localStorage
+        updateCardCount(); // Atualiza o contador de cards
+      }
+
+      function clearInput() {
+        document.getElementById("nameInput").value = "";
+      }
+
+      function updateCardCount() {
+        var cardCount = document.getElementById("cardCount");
+        var count = localStorage.length;
+        cardCount.textContent = count;
+      }
+
+      // Carregar os cards existentes do localStorage ao carregar a página
+      window.onload = function () {
+        var cardsContainer = document.getElementById("cardsContainer");
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var cardId = localStorage.key(i);
+          var cardData = JSON.parse(localStorage.getItem(cardId));
+
+          var cardHtml = `
+            <div class="card${
+              cardData.completed ? " completed" : ""
+            }" id="${cardId}">
+              <p>${cardData.name}</p>
+              <p class="time">Tempo inicial: ${cardData.startTime}</p>
+              <p class="time">Tempo final: <span id="endTime-${cardId}">${
+            cardData.endTime
+          }</span></p>
+              <button onclick="addTurn(${cardId})">Adicionar turno</button>
+              <button onclick="completeCard(${cardId})">${
+            cardData.completed ? "Reabrir" : "Concluir"
+          }</button>
+            </div>
+          `;
+
+          cardsContainer.insertAdjacentHTML("beforeend", cardHtml);
+
+          var endTimeSpan = document.getElementById("endTime-" + cardId);
+          if (cardData.turns > 0) {
+            var endTime = new Date();
+            endTime.setMinutes(endTime.getMinutes() + cardData.turns * 10);
+            endTimeSpan.textContent = endTime.toLocaleTimeString();
+          }
+        }
+
+        updateCardCount(); // Atualiza o contador de cards
+      };
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
