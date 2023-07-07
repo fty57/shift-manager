@@ -26,15 +26,12 @@
           type="text"
           id="nameInput"
           placeholder="Digite um nome"
-          class="form-control display-3"
+          class="form-control fs-1"
         />
-        <button
-          onclick="addCard(); clearInput()"
-          class="btn btn-success display-3"
-        >
+        <button onclick="addCard(); clearInput()" class="btn btn-success fs-1">
           Adicionar
         </button>
-        <button onclick="confirmClear()" class="btn btn-danger display-3">
+        <button onclick="confirmClear()" class="btn btn-danger fs-1">
           Limpar Tudo
         </button>
       </div>
@@ -63,9 +60,9 @@
               <h5 class="card-title display-4">Tempo final: <span id="endTime-${cardId}"></span></h5>
 
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-success display-4" onclick="addTurn(${cardId})">Adicionar turno</button>
-                <button type="button" class="btn btn-danger display-4" onclick="removeTurn(${cardId})">Remover turno</button>
-                <button type="button" class="btn btn-warning display-4" onclick="completeCard(${cardId})">Concluir</button>
+                <button type="button" class="btn btn-success fs-2" onclick="addTurn(${cardId})">Adicionar turno</button>
+                <button type="button" class="btn btn-danger fs-2" onclick="removeTurn(${cardId})">Remover turno</button>
+                <button type="button" class="btn btn-warning fs-2" onclick="completeCard(${cardId})">Concluir</button>
               </div>
             </div>
           </div>
