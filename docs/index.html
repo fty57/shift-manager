@@ -19,19 +19,22 @@
     <div class="container-fluid">
       <h1 class="display-1">Gerenciador de Turnos</h1>
 
-      <h5 class="h5">Total de Cards: <span id="cardCount">0</span></h5>
+      <h5 class="display-2">Total de Cards: <span id="cardCount">0</span></h5>
 
       <div class="input-group mb-3">
         <input
           type="text"
           id="nameInput"
           placeholder="Digite um nome"
-          class="form-control"
+          class="form-control display-3"
         />
-        <button onclick="addCard(); clearInput()" class="btn btn-success">
+        <button
+          onclick="addCard(); clearInput()"
+          class="btn btn-success display-3"
+        >
           Adicionar
         </button>
-        <button onclick="confirmClear()" class="btn btn-danger">
+        <button onclick="confirmClear()" class="btn btn-danger display-3">
           Limpar Tudo
         </button>
       </div>
@@ -53,16 +56,16 @@
         var cardHtml = `
           <div class="card bg-dark-emphasis" id="${cardId}">
             <div class="card-header">
-              <p class="h1">${name}</p>
+              <p class="display-4">${name}</p>
             </div>
             <div class='card-body'>
-              <h5 class="card-title">Tempo inicial: <span>${startTime}</span></h5>
-              <h5 class="card-title">Tempo final: <span id="endTime-${cardId}"></span></h5>
+              <h5 class="card-title display-4">Tempo inicial: <span>${startTime}</span></h5>
+              <h5 class="card-title display-4">Tempo final: <span id="endTime-${cardId}"></span></h5>
 
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-success" onclick="addTurn(${cardId})">Adicionar turno</button>
-                <button type="button" class="btn btn-danger" onclick="removeTurn(${cardId})">Remover turno</button>
-                <button type="button" class="btn btn-warning" onclick="completeCard(${cardId})">Concluir</button>
+                <button type="button" class="btn btn-success display-4" onclick="addTurn(${cardId})">Adicionar turno</button>
+                <button type="button" class="btn btn-danger display-4" onclick="removeTurn(${cardId})">Remover turno</button>
+                <button type="button" class="btn btn-warning display-4" onclick="completeCard(${cardId})">Concluir</button>
               </div>
             </div>
           </div>
